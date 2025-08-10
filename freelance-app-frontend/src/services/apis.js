@@ -1,6 +1,5 @@
-// Detect backend base URL based on environment
 const BASE_URL = import.meta.env.PROD
-  ? 'https://freelance-zglx.onrender.com'  // <-- REPLACE with your deployed backend URL
+  ? 'https://freelance-zglx.onrender.com'  // your deployed backend URL
   : 'http://localhost:5001';
 
 export const AUTH_API = {
@@ -10,46 +9,46 @@ export const AUTH_API = {
 };
 
 export const GIG_API = {
-  CREATE_GIG: `${BASE_URL}/gigs`,
-  GET_ALL_GIGS: `${BASE_URL}/gigs`,
-  GET_MY_GIGS: `${BASE_URL}/gigs/my-gigs`,
-  GET_GIG_BY_ID: (id) => `${BASE_URL}/gigs/${id}`,
-  UPDATE_GIG: (id) => `${BASE_URL}/gigs/${id}`,
-  DELETE_GIG: (id) => `${BASE_URL}/gigs/${id}`,
-  SEARCH_BY_CATEGORY: `${BASE_URL}/gigs/search`,
+  CREATE_GIG: `${BASE_URL}/api/gigs`,
+  GET_ALL_GIGS: `${BASE_URL}/api/gigs`,
+  GET_MY_GIGS: `${BASE_URL}/api/gigs/my-gigs`,
+  GET_GIG_BY_ID: (id) => `${BASE_URL}/api/gigs/${id}`,
+  UPDATE_GIG: (id) => `${BASE_URL}/api/gigs/${id}`,
+  DELETE_GIG: (id) => `${BASE_URL}/api/gigs/${id}`,
+  SEARCH_BY_CATEGORY: `${BASE_URL}/api/gigs/search`,
 };
 
 export const UPLOAD_API = {
-  UPLOAD_IMAGES: `${BASE_URL}/upload`,
-  DELETE_IMAGE: (publicId) => `${BASE_URL}/upload?public_id=${publicId}`,
+  UPLOAD_IMAGES: `${BASE_URL}/api/upload`,
+  DELETE_IMAGE: (publicId) => `${BASE_URL}/api/upload?public_id=${publicId}`,
 };
 
 export const ORDER_API = {
-  CREATE_ORDER: `${BASE_URL}/orders`,
-  GET_MY_ORDERS: `${BASE_URL}/orders/my-orders`,
-  GET_SELLER_ORDERS: `${BASE_URL}/orders/seller-orders`,
-  UPDATE_ORDER_STATUS: (id) => `${BASE_URL}/orders/${id}`,
+  CREATE_ORDER: `${BASE_URL}/api/orders`,
+  GET_MY_ORDERS: `${BASE_URL}/api/orders/my-orders`,
+  GET_SELLER_ORDERS: `${BASE_URL}/api/orders/seller-orders`,
+  UPDATE_ORDER_STATUS: (id) => `${BASE_URL}/api/orders/${id}`,
 };
 
 export const PAYMENT_API = {
-  CREATE_ORDER: `${BASE_URL}/payment/create-order`,
-  WEBHOOK: `${BASE_URL}/payment/webhook`,
+  CREATE_ORDER: `${BASE_URL}/api/payment/create-order`,
+  WEBHOOK: `${BASE_URL}/api/payment/webhook`,
 };
 
 export const CHAT_API = {
-  CREATE_MESSAGE: `${BASE_URL}/chat/message`,
-  GET_MESSAGES: (conversationId) => `${BASE_URL}/chat/messages/${conversationId}`,
-  GET_CONVERSATIONS: (userId) => `${BASE_URL}/chat/conversations/${userId}`,
-  CREATE_CONVERSATION: `${BASE_URL}/chat/conversation`,
+  CREATE_MESSAGE: `${BASE_URL}/api/chat/message`,
+  GET_MESSAGES: (conversationId) => `${BASE_URL}/api/chat/messages/${conversationId}`,
+  GET_CONVERSATIONS: (userId) => `${BASE_URL}/api/chat/conversations/${userId}`,
+  CREATE_CONVERSATION: `${BASE_URL}/api/chat/conversation`,
 };
 
 export const REVIEW_API = {
-  CREATE_REVIEW: `${BASE_URL}/reviews`,
-  GET_REVIEWS_FOR_GIG: `${BASE_URL}/reviews/gig`,
+  CREATE_REVIEW: `${BASE_URL}/api/reviews`,
+  GET_REVIEWS_FOR_GIG: `${BASE_URL}/api/reviews/gig`,
 };
 
 export const SAVED_GIGS_API = {
-  SAVE_GIG: (gigId) => `${BASE_URL}/saved-gigs/save/${gigId}`,
-  REMOVE_GIG: (gigId) => `${BASE_URL}/saved-gigs/save/${gigId}`,
-  GET_SAVED_GIGS: `${BASE_URL}/saved-gigs`,
+  SAVE_GIG: (gigId) => `${BASE_URL}/api/saved-gigs/save/${gigId}`,
+  REMOVE_GIG: (gigId) => `${BASE_URL}/api/saved-gigs/save/${gigId}`,
+  GET_SAVED_GIGS: `${BASE_URL}/api/saved-gigs`,
 };
