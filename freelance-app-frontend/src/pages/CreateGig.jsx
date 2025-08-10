@@ -68,44 +68,48 @@ const CreateGig = () => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
+const onSubmit = async (data) => {
+  try {
+    setUploading(true);
 
-  const onSubmit = async (data) => {
-    try {
-      setUploading(true);
+    const formData = new FormData();
+    if (coverFile) formData.append("images", coverFile);
+    imageFiles.forEach((file) => formData.append("images", file));
 
-      const formData = new FormData();
-      if (coverFile) formData.append("images", coverFile);
-      imageFiles.forEach((file) => formData.append("images", file));
+    const res = await apiConnector("POST", UPLOAD_API.UPLOAD_IMAGES, formData, {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${user.token}`,  // add here if required
+    });
 
-      const res = await apiConnector("POST", UPLOAD_API.UPLOAD_IMAGES, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    const [coverFileResponse, ...otherFiles] = res.files;
 
-      const [coverFileResponse, ...otherFiles] = res.files;
+    const payload = {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      description: data.description,
+      category: data.category,
+      price: Number(data.price),
+      deliveryTime: Number(data.deliveryTime),
+      revisionNumber: Number(data.revisionNumber),
+      cover: coverFileResponse,
+      images: otherFiles,
+      features: data.features.filter((f) => f.trim() !== ""),
+    };
 
-      const payload = {
-        title: data.title,
-        shortDescription: data.shortDescription,
-        description: data.description,
-        category: data.category,
-        price: Number(data.price),
-        deliveryTime: Number(data.deliveryTime),
-        revisionNumber: Number(data.revisionNumber),
-        cover: coverFileResponse,
-        images: otherFiles,
-        features: data.features.filter((f) => f.trim() !== ""),
-      };
+    await apiConnector("POST", GIG_API.CREATE_GIG, payload, {
+      Authorization: `Bearer ${user.token}`,  // IMPORTANT: add token here
+    });
 
-      await apiConnector("POST", GIG_API.CREATE_GIG, payload);
-      toast.success("Gig created successfully!");
-      navigate("/my-gigs");
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Failed to create gig");
-    } finally {
-      setUploading(false);
-    }
-  };
+    toast.success("Gig created successfully!");
+    navigate("/my-gigs");
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message || "Failed to create gig");
+  } finally {
+    setUploading(false);
+  }
+};
+
 
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => s - 1);
