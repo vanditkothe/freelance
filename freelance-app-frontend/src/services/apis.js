@@ -1,6 +1,6 @@
 // Detect backend base URL based on environment
 const BASE_URL = import.meta.env.PROD
-  ? 'https://your-backend-deployed-url.com'  // <-- REPLACE with your deployed backend URL
+  ? 'https://freelance-zglx.onrender.com'  // <-- REPLACE with your deployed backend URL
   : 'http://localhost:5001';
 
 export const AUTH_API = {
