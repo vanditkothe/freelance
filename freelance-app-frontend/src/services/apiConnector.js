@@ -1,8 +1,9 @@
+import axiosInstance from "../utils/axios";
+
 export const apiConnector = async (method, url, data = {}, options = {}) => {
   try {
     const token = localStorage.getItem("token");
 
-    // Extract headers from options to merge properly
     const { headers: customHeaders = {}, ...restOptions } = options;
 
     const headers = {
@@ -21,7 +22,7 @@ export const apiConnector = async (method, url, data = {}, options = {}) => {
       ...restOptions,
     };
 
-    const response = await axios(config);
+    const response = await axiosInstance(config);
     return response.data;
   } catch (error) {
     throw error.response?.data || error;
