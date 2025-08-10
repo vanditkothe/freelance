@@ -31,34 +31,37 @@ const Login = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      setErrorMsg("");
+  try {
+    setLoading(true);
+    setErrorMsg("");
 
-      const res = await apiConnector("POST", AUTH_API.LOGIN_API, data);
+    const res = await apiConnector("POST", AUTH_API.LOGIN_API, data);
 
-      dispatch(loginSuccess({ user: res.user, token: res.token }));
-      toast.success("Logged in successfully!", {
-        style: {
-          background: darkMode ? '#1f2937' : '#f3f4f6',
-          color: darkMode ? 'white' : '#111827',
-        }
-      });
+    localStorage.setItem("token", res.token);  // <-- save token here
 
-      navigate(res.user?.role === "freelancer" ? "/dashboard" : "/");
-    } catch (err) {
-      console.error("Login error:", err);
-      setErrorMsg(err.message || "Login failed");
-      toast.error(err.message || "Login failed", {
-        style: {
-          background: darkMode ? '#1f2937' : '#f3f4f6',
-          color: darkMode ? 'white' : '#111827',
-        }
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    dispatch(loginSuccess({ user: res.user, token: res.token }));
+    toast.success("Logged in successfully!", {
+      style: {
+        background: darkMode ? '#1f2937' : '#f3f4f6',
+        color: darkMode ? 'white' : '#111827',
+      }
+    });
+
+    navigate(res.user?.role === "freelancer" ? "/dashboard" : "/");
+  } catch (err) {
+    console.error("Login error:", err);
+    setErrorMsg(err.message || "Login failed");
+    toast.error(err.message || "Login failed", {
+      style: {
+        background: darkMode ? '#1f2937' : '#f3f4f6',
+        color: darkMode ? 'white' : '#111827',
+      }
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`}>
