@@ -23,7 +23,6 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Allowed frontend origins (local + deployed)
 const allowedOrigins = [
   'http://localhost:5173',
   'https://freelance-one-omega.vercel.app',
@@ -33,11 +32,12 @@ const allowedOrigins = [
 const io = new Server(server, {
   cors: {
     origin: function(origin, callback) {
-      if (!origin) return callback(null, true); // allow non-browser requests
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error("CORS error: Origin not allowed by CORS"), false);
+      if (!origin) return callback(null, true); // allow non-browser requests like Postman
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS error: Origin not allowed by CORS"));
       }
-      return callback(null, true);
     },
     credentials: true,
   },
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    for (let [key, value] of connectedUsers.entries()) {
+    for (const [key, value] of connectedUsers.entries()) {
       if (value === socket.id) connectedUsers.delete(key);
     }
     console.log("🔴 Disconnected:", socket.id);
@@ -74,11 +74,12 @@ io.on("connection", (socket) => {
 // === Middlewares ===
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman, curl, etc.
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error("CORS error: Origin not allowed"), false);
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("CORS error: Origin not allowed"));
     }
-    return callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -89,10 +90,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// === MongoDB Connection ===
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error("❌ MongoDB Error:", err));
+// === MongoDB Connection with better error logging ===
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => console.error("❌ MongoDB connection error:", err));
 
 // === Static Files Setup ===
 const __filename = fileURLToPath(import.meta.url);
