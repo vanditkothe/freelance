@@ -8,7 +8,6 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-
 // Route Imports
 import authRoutes from './routes/authRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
@@ -17,17 +16,29 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import savedGigRoutes from './routes/savedGigRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-import messageRoutes from './routes/messageRoutes.js'; // 💬 new route
+import messageRoutes from './routes/messageRoutes.js';
 
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // use http server for socket.io
+const server = http.createServer(app);
+
+// Allowed frontend origins (local + deployed)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://freelance-one-omega.vercel.app',
+];
 
 // === Socket.IO Setup ===
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true); // allow non-browser requests
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error("CORS error: Origin not allowed by CORS"), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   },
 });
@@ -62,11 +73,18 @@ io.on("connection", (socket) => {
 
 // === Middlewares ===
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman, curl, etc.
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error("CORS error: Origin not allowed"), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -89,7 +107,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/saved-gigs', savedGigRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/chat', messageRoutes); 
+app.use('/api/chat', messageRoutes);
 
 // === Default Route ===
 app.get('/', (req, res) => {
